@@ -1,0 +1,5 @@
+package com.smartshop.admin.user;
+
+public class UserNotFoundException extends Exception {
+
+}
