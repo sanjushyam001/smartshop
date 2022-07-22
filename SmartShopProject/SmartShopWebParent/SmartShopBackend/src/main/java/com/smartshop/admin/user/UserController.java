@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -35,13 +38,17 @@ public class UserController {
 	 */
 	@GetMapping("/users")
 	public String listFirstPage(Model model) {
-		return listByPage(1, model);
+		return listByPage(1, model,"firstName","asc",null);
 	}
 	@GetMapping("/users/page/{pageNumber}")
-	public String listByPage(@PathVariable(name = "pageNumber") Integer pageNumber,Model model) {
-		Page<User> page = service.listByPage(pageNumber);
+	public String listByPage(@PathVariable(name = "pageNumber") Integer pageNumber,Model model,
+			@Param("sortField") String sortField,@Param("sortDirection") String sortDirection,
+			@Param("keyword") String keyword) {
+		System.out.println("Sort Field: "+sortField);
+		System.out.println("Sort Direction: "+sortDirection);
+		Page<User> page = service.listByPage(pageNumber,sortField,sortDirection,keyword);
 		List<User> listUsers = page.getContent();
-		
+		System.out.println("KEYWORD: "+keyword);
 		/*
 		 * System.out.println("PageNumber: "+pageNumber);
 		 * System.out.println("Total elements: "+page.getTotalElements());
@@ -52,12 +59,19 @@ public class UserController {
 		if(endCount>page.getTotalElements()) {
 			endCount=page.getTotalElements();
 		}
+		
+		String reverseSortOrder=sortDirection.equals("asc")?"desc":"asc";
+		
 		model.addAttribute("startCount", startCount);
 		model.addAttribute("endCount", endCount);
 		model.addAttribute("currentPage", pageNumber);
 		model.addAttribute("totalPage", page.getTotalPages());
 		model.addAttribute("totalItems", page.getTotalElements());
 		model.addAttribute("listUsers",listUsers);
+		model.addAttribute("sortDirection", sortDirection);
+		model.addAttribute("sortField", sortField);
+		model.addAttribute("reverseSortOrder", reverseSortOrder);
+		model.addAttribute("keyword", keyword);
 		//model.addAttribute("listUsers", new ArrayList<User>());
 		return "users";
 	}
@@ -136,5 +150,12 @@ public class UserController {
 		String mesg="The user ID "+id+ " has been "+ status;
 		redirectAttributes.addFlashAttribute("mesg", mesg);
 		return "redirect:/users";
+	}
+	@GetMapping("/users/export/csv")
+	public void exportToCSV(HttpServletResponse response) throws IOException {
+	
+		List<User> listUser = service.listAll();
+		UserCSVExporter exporter= new UserCSVExporter();
+		exporter.export(listUser, response);
 	}
 }

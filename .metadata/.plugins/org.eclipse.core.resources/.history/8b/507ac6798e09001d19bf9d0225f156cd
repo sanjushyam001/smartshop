@@ -1,0 +1,15 @@
+package com.smartshop.admin.user;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
+import com.smartshop.common.entity.User;
+
+public class UserCSVExporter {
+
+	public void export(List<User> listUser , HttpServletResponse response) {
+		
+		
+	}
+}

@@ -1,0 +1,162 @@
+package com.smartshop.admin.user;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.useRepresentation;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.smartshop.common.entity.Role;
+import com.smartshop.common.entity.User;
+
+@DataJpaTest(showSql = false)
+@AutoConfigureTestDatabase(replace = Replace.NONE)
+@Rollback(false)
+//@Transactional
+
+public class UserRepositoryTests {
+
+	
+	@Autowired
+	private UserRepository repo;
+	
+	@Autowired
+	private TestEntityManager entityManager;
+	
+	@Test
+	public void testCreateNewUserWithOneRole() {
+		Role roleAdmin = entityManager.find(Role.class, 1);
+		
+		
+		User userGaneshJi=new User("ganeshji@gmail.com", "ganeshji1234567", "Ganesh", "Ji");
+		
+		userGaneshJi.addRole(roleAdmin);
+		User savedUser = repo.save(userGaneshJi);
+		assertThat(savedUser).isNotNull();
+		assertThat(savedUser.getId()).isGreaterThan(0);
+		
+	}
+	@Test
+	public void testCreateNewUserWithTwoRoles() {
+	
+		Role roleAdmin = entityManager.find(Role.class, 1);
+		Role roleEditor = entityManager.find(Role.class, 4);
+		
+		User userShankarJi=new User("shankarji@gmail.com", "shankarji1234567", "Shankar", "Ji");
+		
+		userShankarJi.addRole(roleAdmin);
+		userShankarJi.addRole(roleEditor);
+		
+		System.out.println("UserRepositoryTests.testCreateUser()"+userShankarJi);
+		User savedUser = repo.save(userShankarJi);
+		assertThat(savedUser).isNotNull();
+		assertThat(savedUser.getId()).isGreaterThan(0);
+	}
+	@Test
+	public void testListAllUsers() {
+		Iterable<User> listUsers = repo.findAll();
+		listUsers.forEach(user->{System.out.println(user);});
+		assertThat(listUsers).size().isGreaterThan(0);
+	}
+	@Test
+	public void testGetUserById() {
+		Optional<User> user = repo.findById(6);
+		if(user.isPresent()) {
+			assertThat(user.get()).isNotNull();
+			assertThat(user.get().getId()).isGreaterThan(0);
+		}
+	}
+	@Test
+	public void testUpdateUserDetails() {
+		User user=repo.findById(1).get();
+		user.setEnabled(true);
+		user.setEmail("ganeshji@gmail.in");
+		repo.save(user);
+	}
+	@Test
+	public void testUpdateUserRoles() {
+		User userShankarJi = repo.findById(6).get();
+		Role roleEditor = entityManager.find(Role.class, 4);
+		System.out.println("UserRepositoryTests.testUpdateUserRoles()"+roleEditor);
+		Role roleShipper=new Role(5);
+		boolean isRemoved = userShankarJi.getRoles().remove(roleEditor);
+		System.out.println("UserRepositoryTests.testUpdateUserRoles()"+isRemoved);
+		userShankarJi.addRole(roleShipper);
+		repo.save(userShankarJi);
+		
+	}
+	@Test
+	public void testDeleteUser() {
+		Integer userId=1;
+		repo.deleteById(userId);
+		
+	}
+	@Test
+	public void testGetUserByEmail() {
+		String email="shankarji@gmail.com";
+		User user = repo.getUserByEmail(email);
+		assertThat(user).isNotNull();
+	}
+	
+	@Test
+	public void testCountById() {
+		Integer id=2;
+		Long countById = repo.countById(id);
+		assertThat(countById).isNotNull().isGreaterThan(0);
+	}
+	@Test
+	public void testDisableStatus() {
+	
+		Integer id=28;
+		repo.updateEnabledStatus(id, false);
+	}
+	@Test
+	public void testEnableStatus() {
+	
+		Integer id=28;
+		repo.updateEnabledStatus(id, true);
+	}
+	@Test
+	public void testListFirstPage() {
+	
+		int pageNumber=1;
+		int pageSize=5;
+				
+		Pageable pageable = PageRequest.of(pageNumber, pageSize);
+		Page<User> page = repo.findAll(pageable);
+		List<User> listUser = page.getContent();
+		listUser.forEach(user->{
+			System.out.println(user);
+			
+		});
+		assertThat(listUser.size()).isEqualTo(pageSize);
+	}
+	@Test
+	public void testUserSearchs() {
+		String keyword="bruce";
+		int pageNumber=1;
+		int pageSize=5;
+				
+		Pageable pageable = PageRequest.of(pageNumber, pageSize);
+		Page<User> page = repo.findAll(keyword,pageable);
+		List<User> listUser = page.getContent();
+		listUser.forEach(user->{
+			System.out.println(user);
+			
+		});
+	}
+}
