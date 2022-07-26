@@ -16,18 +16,11 @@ import com.smartshop.common.entity.User;
 
 
 
-public class UserCSVExporter {
+public class UserCSVExporter extends AbstractExporter {
 
 	public void export(List<User> listUser , HttpServletResponse response) throws IOException {
 		
-		DateFormat dateFormatter=new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-		String timeStamp=dateFormatter.format(new Date());
-		String fileName="user_"+timeStamp+".csv";
-		response.setContentType("text/csv");
-		String headerKey="Content-Disposition";
-		String headerValue="attachment;fileName="+fileName;
-		response.setHeader(headerKey, headerValue);
-		
+		super.setResponseHeader(response, "text/csv", ".csv");
 		ICsvBeanWriter csvWriter=new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
 		
 		String[] csvHeader= {"User ID","Email","First Name","Last Name","Roles","Enabled"};

@@ -1,0 +1,16 @@
+package com.smartshop.admin.user;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
+import com.smartshop.common.entity.User;
+
+import net.bytebuddy.implementation.bind.annotation.Super;
+
+public class UserPdfExporter extends AbstractExporter {
+
+	public void export(List<User> listUsers,HttpServletResponse response) {
+		super.setResponseHeader(response, "application/pdf", ".pdf");
+	}
+}
