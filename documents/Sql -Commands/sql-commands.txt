@@ -1,0 +1,115 @@
+##################### CREATE TABLE #############################
+
+Example-1
+-----------
+create table roles (id integer not null auto_increment,
+					description varchar(150) not null,
+					names varchar(50) not null,
+					primary key(id)
+);
+
+
+Example-2
+----------
+
+create table users (
+       id integer not null auto_increment,
+        email varchar(128) not null,
+        enabled bit not null,
+        first_name varchar(45) not null,
+        last_name varchar(45) not null,
+        password varchar(64) not null,
+        photos varchar(64),
+        primary key (id)
+    )
+Example-3
+----------
+
+ create table users_roles (
+       user_id integer not null,
+        role_id integer not null,
+        primary key (user_id, role_id)
+    );
+	
+##################### INSERT RECORD #############################
+
+insert into roles (names,description) values(?,?);
+
+
+##################### ALTER RECORD #############################
+
+Example-1
+------------
+alter table roles 
+       drop index UK_ofx66keruapi6vyqpv6f2or37
+
+Example-2
+------------
+alter table roles 
+       add constraint UK_ofx66keruapi6vyqpv6f2or37 unique (name)
+	   
+
+Add foreign key example
+------------------------	  
+alter table users_roles 
+       add constraint FKj6m8fwv7oqv74fcehir1a9ffy 
+       foreign key (role_id) 
+       references roles (id)
+
+alter table users_roles 
+       add constraint FK2o0jvgh89lemvvo17cbqvdxaa 
+       foreign key (user_id) 
+       references users (id)
+	   
+	   
+##################### SELECT RECORDs #############################
+	   
+Example-1
+------------	   
+select
+        id as USER_ID,
+        description as DESCRIPTION,
+        name as NAME 
+    from
+        roles role 
+    where
+        role.id=?
+		
+##################### INNER JOINS #############################
+
+select
+        ur.user_id as USER_ID,
+        ur.role_id as ROLE_ID,
+        ur.id as ID,
+        ur.description as DESCRIPTION,
+        ur.name as NAME 
+    from
+        users_roles ur
+    inner join
+        roles r 
+            on ur.role_id=r.id 
+    where
+        ur.user_id=?
+		
+
+##################### UPDATE RECORD #############################
+
+update
+        users 
+    set
+        email=?,
+        enabled=?,
+        first_name=?,
+        last_name=?,
+        password=?,
+        photos=? 
+    where
+        id=?
+		
+##################### DELETE RECORD #############################
+ delete 
+    from
+        users_roles 
+    where
+        user_id=? 
+        and role_id=?

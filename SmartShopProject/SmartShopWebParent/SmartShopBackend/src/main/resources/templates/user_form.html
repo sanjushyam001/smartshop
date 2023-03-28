@@ -66,7 +66,7 @@
 		</div>
 	
 			<form th:action="@{/users/save}" method="post" style="max-width: 700px;margin: 0 auto" th:object="${user}"
-			enctype="multipart/form-data">
+			enctype="multipart/form-data" id="userFormId">
 				<div class="border border-secondary rounded p-3">
 					<!-- <div th:if="${mesg!=null}" class="alert alert-success text-center" >
 						[[${mesg}]]
@@ -127,7 +127,23 @@
 				</div>
 			</form>
 		
-		
+		<div class="modal fade text-center" id="modalDialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="modalTitle">Warning</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<span id="modalBody"></span>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+			
 		<!-- FOOTER PART -->
 		
 		<div class="text-center">
@@ -135,11 +151,21 @@
 		</div>
 	</div>
 	<script type="text/javascript">
+		var flag=true;
 		$(document).ready(function(){
 			$("#buttonCancel").on("click",function(){
 				window.location="[[@{/users}]]";
 			});
+			
 			checkEmailUnique();
+			
+			$("#buttonSubmit").on("click",function(event){
+				console.log("FLAG VALUE : "+flag);
+				if(flag==false){
+					showModalDialog("Error","Could not connect to server!");
+					event.preventDefault();
+				}
+			});
 			$("#fileImage").change(function(){
 				
 				fileSize=this.files[0].size;
@@ -174,21 +200,36 @@
 				params={id:userId,email:userEmail,_csrf:csrfValue};
 				
 				$.post(url,params,function(response){
-					alert("Response from server .. "+ response);
+					//alert("Response from server .. "+ response);
 						if(response=="OK"){
-							
+								
 								$("#buttonSubmit").prop('disabled', false);
 						}
 						if(response=="Duplicated"){
-						
+							showModalDialog("Warning",`There is the another user having same email ${userEmail}`);
 							$("#buttonSubmit").prop('disabled', true);
 							
 						}
+						if(response!="Duplicated" && response!="OK"){
+							showModalDialog("Error","Unknown response from server ");
+							$("#buttonSubmit").prop('disabled', true);
+						}
 					
+				}).fail(function(){
+					//showModalDialog("Error","Could not connect to server!");
+					flag=false;
 				});
 				return false;
 				
-			});
+			})
+		}
+		
+		
+		function showModalDialog(title,message){
+			$("#modalTitle").text(title);
+			$("#modalBody").text(message);
+			$("#modalDialog").modal();
+			
 		}
 		
 	</script>

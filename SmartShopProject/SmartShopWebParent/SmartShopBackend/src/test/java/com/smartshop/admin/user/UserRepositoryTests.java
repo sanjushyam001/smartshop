@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.smartshop.common.entity.Role;
 import com.smartshop.common.entity.User;
 
-@DataJpaTest(showSql = false)
+@DataJpaTest(showSql = true)
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @Rollback(false)
 //@Transactional
@@ -39,7 +39,7 @@ public class UserRepositoryTests {
 	
 	@Test
 	public void testCreateNewUserWithOneRole() {
-		Role roleAdmin = entityManager.find(Role.class, 1);
+		Role roleAdmin = entityManager.find(Role.class, 3);
 		
 		
 		User userGaneshJi=new User("ganeshji@gmail.com", "ganeshji1234567", "Ganesh", "Ji");
@@ -53,7 +53,7 @@ public class UserRepositoryTests {
 	@Test
 	public void testCreateNewUserWithTwoRoles() {
 	
-		Role roleAdmin = entityManager.find(Role.class, 1);
+		Role roleAdmin = entityManager.find(Role.class, 5);
 		Role roleEditor = entityManager.find(Role.class, 4);
 		
 		User userShankarJi=new User("shankarji@gmail.com", "shankarji1234567", "Shankar", "Ji");
@@ -74,7 +74,7 @@ public class UserRepositoryTests {
 	}
 	@Test
 	public void testGetUserById() {
-		Optional<User> user = repo.findById(6);
+		Optional<User> user = repo.findById(10);
 		if(user.isPresent()) {
 			assertThat(user.get()).isNotNull();
 			assertThat(user.get().getId()).isGreaterThan(0);
@@ -82,20 +82,20 @@ public class UserRepositoryTests {
 	}
 	@Test
 	public void testUpdateUserDetails() {
-		User user=repo.findById(1).get();
+		User user=repo.findById(10).get();
 		user.setEnabled(true);
-		user.setEmail("ganeshji@gmail.in");
+		user.setEmail("shyamrocking007@gmail.com");
 		repo.save(user);
 	}
 	@Test
 	public void testUpdateUserRoles() {
-		User userShankarJi = repo.findById(6).get();
-		Role roleEditor = entityManager.find(Role.class, 4);
-		System.out.println("UserRepositoryTests.testUpdateUserRoles()"+roleEditor);
-		Role roleShipper=new Role(5);
-		boolean isRemoved = userShankarJi.getRoles().remove(roleEditor);
+		User userShankarJi = repo.findById(10).get();
+		Role adminRole = entityManager.find(Role.class, 3);
+		System.out.println("UserRepositoryTests.testUpdateUserRoles()"+adminRole);
+		Role roleEditor=new Role(5);
+		boolean isRemoved = userShankarJi.getRoles().remove(adminRole);
 		System.out.println("UserRepositoryTests.testUpdateUserRoles()"+isRemoved);
-		userShankarJi.addRole(roleShipper);
+		userShankarJi.addRole(roleEditor);
 		repo.save(userShankarJi);
 		
 	}
