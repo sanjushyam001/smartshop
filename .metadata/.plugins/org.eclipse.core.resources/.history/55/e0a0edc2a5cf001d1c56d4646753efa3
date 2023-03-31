@@ -1,0 +1,4 @@
+server.port=9292
+server.servlet.context-path=/SmartShop
+product.id=1001
+product.name=Mobile

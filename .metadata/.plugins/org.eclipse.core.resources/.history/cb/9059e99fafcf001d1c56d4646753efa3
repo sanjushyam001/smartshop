@@ -1,0 +1,24 @@
+package com.smartshop.site;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
+
+@SpringBootApplication
+public class SmartShopFrontendApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SmartShopFrontendApplication.class, args);
+		
+		ApplicationContext ac=new AnnotationConfigApplicationContext(AppConfig.class);
+//		((AbstractApplicationContext) ac).refresh();
+		Product p = ac.getBean("product",Product.class);
+		
+		System.out.println(p.getId());
+		System.out.println(p.getName());
+		
+	}
+
+}

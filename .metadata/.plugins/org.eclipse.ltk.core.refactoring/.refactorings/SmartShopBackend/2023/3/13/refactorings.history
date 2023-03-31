@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;user_form.html&apos; to &apos;user_form.html&apos;&#x0D;&#x0A;- Original project: &apos;SmartShopBackend&apos;&#x0D;&#x0A;- Destination element: &apos;user_form.html&apos;&#x0D;&#x0A;- Original element: &apos;user_form.html&apos;" description="Copy file" element1="src/main/resources/templates/user_form.html" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1680086027560" target="/SmartShopBackend/src/main/resources/templates/user_form.html" units="0" version="1.0"/>
+</session>

@@ -67,6 +67,7 @@
 						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link dropdown-toggle" data-toggle="dropdown"
+							th:href="@{/account}"
 							sec:authentication="principal.fullname">Settings</a>
 							<div class="dropdown-menu">
 								<a class="dropdown-item" id="logoutLink" href="">Logout</a>
@@ -298,11 +299,26 @@
 				$("#confirmText").text("Are you sure ,want to delete this id?"+ userId);
 				$("#confirmModal").modal();
 			});
+			customizeDropdown();
 		});
 		function clearFilter(){
 			
 			window.location="[[@{/users}]]";
 			alert(window.location);
+		}
+		
+		function customizeDropdown(){
+			$(".dropdown > a").click(function(){
+				location.href=this.href;
+			});
+			
+			$(".navbar .dropdown").hover(
+					function(){
+						$(this).find('.dropdown-menu').first().stop(true,true).delay(250).slideDown();
+					},
+					function(){
+						$(this).find('.dropdown-menu').first().stop(true,true).delay(100).slideDown();
+					});
 		}
 	</script>
 	</body>
